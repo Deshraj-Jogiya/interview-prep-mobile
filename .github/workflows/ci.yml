@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm install
+      - name: Run the real unit tests (React Native Testing Library, mocked fetch/AsyncStorage)
+        run: npm test -- --ci
+      - name: Add web-export deps and export a real Metro bundle (build verification)
+        run: |
+          npx expo install react-dom react-native-web
+          npx expo export --platform web
